@@ -111,12 +111,10 @@ exports.semverCmp = function(ver1, ver2) {
 }
 
 exports.lineStream = function(writeLine) {
-    console.log("k");
     var lastLine = new Buffer(''), delim = new Buffer('\n')
     return new stream.Transform({
         transform(chunk, encoding, cb) {
             chunk = Buffer.concat([lastLine, chunk])
-            console.log(chunk);
             var delimIx = -1, offset = 0
             while ((delimIx = chunk.indexOf(delim, offset)) >= 0) {
                 writeLine(chunk.slice(offset, delimIx).toString('utf8'))

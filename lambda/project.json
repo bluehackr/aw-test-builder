@@ -2,7 +2,7 @@
   "name": "apiway-test-builder",
   "description": "",
   "memory": 128,
-  "timeout": 40,
+  "timeout": 100,
   "role": "arn:aws:iam::539277938309:role/apiway-test-builder_lambda_function",
   "environment": {
     "version": "0.0.1"

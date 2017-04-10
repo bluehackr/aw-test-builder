@@ -226,7 +226,14 @@ function lambdaBuild(build, cb) {
         env: config.resolveEnv(build.config),
     }
 
-    runInBash(build.config.cmd, opts, cb)
+    var child_process = require('child_process');
+    console.log(child_process.execSync('find /usr -name npm -type f', {encoding: 'utf-8'}));
+
+    var cmds = ['npm install -d', "./node_modules/mocha/bin/mocha test"];
+    var runCmd = (cmd, cb) => runInBash(cmd, opts, cb)
+
+    async.forEachSeries(cmds, runCmd, cb)
+    // runInBash(build.config.cmd, opts, cb)
 }
 
 function runInBash(cmd, opts, cb) {
@@ -252,7 +259,12 @@ function runInBash(cmd, opts, cb) {
     var proc = spawn('/bin/bash', ['-c', cmd ], opts)
     proc.stdout.pipe(utils.lineStream(log.info))
     proc.stderr.pipe(utils.lineStream(log.error))
-    proc.on('error', cb)
+    // proc.on('error', cb)
+    proc.on('error', function (err) {
+        console.log(err)
+        cb(err);
+    });
+
     proc.on('close', function(code) {
         var err
         console.log("bok 1");
