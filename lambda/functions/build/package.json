@@ -1,0 +1,9 @@
+{
+  "name": "aw-test-builder",
+  "version": "0.0.1",
+  "dependencies": {
+    "ansi_up": "1.3.0",
+    "async": "2.3.0",
+    "nave": "^2.2.3"
+  }
+}

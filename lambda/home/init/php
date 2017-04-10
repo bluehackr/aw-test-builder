@@ -1,0 +1,40 @@
+#!/bin/bash
+set -e
+
+VERSION=${1:-7.1.1}
+
+echo "Installing PHP ${VERSION}..."
+
+# First grab libtidy and libmcrypt and put them in our ~/usr/lib64 directory
+curl -sSL https://lambci.s3.amazonaws.com/binaries/libtidy-0.99.tgz | tar -xz -C ~
+curl -sSL https://lambci.s3.amazonaws.com/binaries/libmcrypt-4.4.8.tgz | tar -xz -C ~
+
+export PHPENV_ROOT=~/.phpenv
+export PATH=$PHPENV_ROOT/bin:$PATH
+
+# Grab the PHP version we want
+if ! [ -d $PHPENV_ROOT/versions/$VERSION ]; then
+  set -x
+  mkdir -p $PHPENV_ROOT/versions
+  curl -sSL https://lambci.s3.amazonaws.com/binaries/php-${VERSION}.tgz | tar -xz -C $PHPENV_ROOT/versions
+  set +x
+fi
+
+# Init phpenv
+eval "$(phpenv init -)"
+phpenv local $VERSION
+php --version
+
+# Install composer
+if ! [ -f $PHPENV_ROOT/bin/composer ]; then
+  set -x
+  curl -sSL https://getcomposer.org/installer -o composer-setup.php
+  echo $(curl https://composer.github.io/installer.sig) composer-setup.php | sha384sum -c
+  php composer-setup.php --install-dir $PHPENV_ROOT/bin --filename composer
+  rm composer-setup.php
+  set +x
+fi
+
+echo "PHP setup complete"
+echo ""
+
